@@ -17,31 +17,42 @@ const faqs = [
 ];
 
 const App = () => {
-  return <Accordion />;
+  return <Accordion data={faqs} />;
 };
 
-const Accordion = () => {
+const Accordion = ({ data }) => {
+  const [currentOpen, setCurOpen] = useState(null);
+
   return (
     <div className="accordion">
-      {faqs.map((f, i) => (
-        <AccordionItem key={i} num={i + 1} title={f.title} text={f.text} />
+      {data.map((f, i) => (
+        <AccordionItem
+          key={i}
+          currOpen={currentOpen}
+          num={i + 1}
+          title={f.title}
+          onOpen={setCurOpen}
+        >
+          {f.text}
+        </AccordionItem>
       ))}
     </div>
   );
 };
 
-const AccordionItem = ({ num, title, text }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const AccordionItem = ({ currOpen, num, title, onOpen, children }) => {
+  const isOpen = num === currOpen;
 
   const handleToggle = () => {
-    setIsOpen((isOpen) => !isOpen);
+    onOpen(isOpen ? null : num);
   };
+
   return (
     <div className={`item ${isOpen ? "open" : ""}`} onClick={handleToggle}>
       <p className="number">{num < 9 ? `0${num}` : num}</p>
       <p className="title">{title}</p>
       <p>{isOpen ? "-" : "+"}</p>
-      {isOpen && <div className="content-box">{text}</div>}
+      {isOpen && <div className="content-box">{children}</div>}
     </div>
   );
 };
